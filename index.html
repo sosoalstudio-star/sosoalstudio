@@ -1,371 +1,1039 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="N7r0pG_QqgvaTG1ZTQbAzjVNX8pvMbZ4yy1qPd2xd4w" />
-    <title>sosoalstudio - استوديو الأزياء الفاخر</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://googleapis.com" rel="stylesheet">
-    <style>
-        /* --- CSS Variables & Reset --- */
-        :root {
-            --primary-color: #1a1a1a;
-            --secondary-color: #2c2c2c;
-            --accent-color: #c5a059;
-            --accent-hover: #a8843e;
-            --bg-color: #fafafa;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --text-light: #666666;
-            --danger-color: #d9534f;
-            --success-color: #28a745;
-            --border-radius: 10px;
-            --shadow: 0 5px 15px rgba(0,0,0,0.08);
-            --transition: all 0.3s ease;
-            --border-width: 1.5px;
-        }
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="google-site-verification" content="N7r0pG_QqgvaTG1ZTQbAzjVNX8pvMbZ4yy1qPd2xd4w" />
+ <title>sosoalstudio - استوديو الأزياء</title>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ <style>
+ /* --- CSS Variables & Reset --- */
+:root {
+ --primary-color: #1a1a1a;
+ --accent-color: #c5a059;
+ --bg-color: #ffffff;
+ --card-bg: #ffffff;
+ --text-color: #333333;
+ --text-light: #666666;
+ --border-radius: 8px;
+ --shadow: 0 4px 6px rgba(0,0,0,0.1);
+ --transition: all 0.3s ease;
+ --border-width: 2px;
+ }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
-        }
+ * {
+ margin: 0;
+ padding: 0;
+ box-sizing: border-box;
+ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+ }
 
-        html {
-            scroll-behavior: smooth;
-        }
+ body {
+ background-color: var(--bg-color);
+ color: var(--text-color);
+ line-height: 1.6;
+ padding: 20px;
+ min-height: 100vh;
+ }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            border-top: 4px solid var(--accent-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+ /* --- Header & Nav --- */
+ header {
+ background-color: var(--card-bg);
+ border: var(--border-width) solid var(--accent-color);
+ box-shadow: var(--shadow);
+ position: sticky;
+ top: 0;
+ z-index: 1000;
+ border-radius: var(--border-radius);
+ }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            width: 100%;
-        }
+.container {
+ max-width: 1200px;
+ margin: 0 auto;
+ padding: 0 20px;
+ }
 
-        /* --- Header & Nav --- */
-        header {
-            background-color: var(--card-bg);
-            border-bottom: var(--border-width) solid var(--accent-color);
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+ nav {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ height: 80px;
+ flex-wrap: wrap;
+ gap: 15px;
+ }
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 80px;
-        }
+.logo-area {
+ display: flex;
+ align-items: center;
+ gap: 15px;
+ flex-shrink: 0;
+ }
 
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
+.logo-img {
+ height: 50px;
+ width: auto;
+ object-fit: contain;
+ border: 1px solid var(--accent-color);
+ padding: 5px;
+ border-radius: 4px;
+ }
 
-        .logo-svg {
-            width: 48px;
-            height: 48px;
-            flex-shrink: 0;
-        }
+.logo-text {
+ font-size: 1.8rem;
+ font-weight: bold;
+ color: var(--primary-color);
+ text-decoration: none;
+ letter-spacing: 1px;
+ }
 
-        .logo-text {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--primary-color);
-            letter-spacing: 0.5px;
-        }
+.logo-text span {
+ color: var(--accent-color);
+ }
 
-        .logo-text span {
-            color: var(--accent-color);
-        }
+.nav-links {
+ display: flex;
+ gap: 20px;
+ flex-wrap: wrap;
+ }
 
-        .nav-links {
-            display: flex;
-            gap: 25px;
-            align-items: center;
-        }
+.nav-links a {
+ text-decoration: none;
+ color: var(--text-color);
+ font-weight: 500;
+ transition: var(--transition);
+ position: relative;
+ padding: 5px 0;
+ }
 
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-color);
-            font-weight: 600;
-            transition: var(--transition);
-            position: relative;
-            padding: 5px 0;
-        }
+.nav-links a:hover,.nav-links a.active {
+ color: var(--accent-color);
+ }
 
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--accent-color);
-        }
+.nav-links a.active::after {
+ content: '';
+ position: absolute;
+ bottom: 0;
+ right: 0;
+ width: 100%;
+ height: 2px;
+ background-color: var(--accent-color);
+ }
 
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+.social-icons {
+ display: flex;
+ gap: 15px;
+ }
 
-        .social-icon {
-            color: var(--primary-color);
-            font-size: 1.2rem;
-            transition: var(--transition);
-            text-decoration: none;
-            border: 1px solid var(--accent-color);
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
+.social-icon {
+ color: var(--primary-color);
+ font-size: 1.2rem;
+ transition: var(--transition);
+ text-decoration: none;
+ border: 1px solid transparent;
+ padding: 8px;
+ border-radius: 50%;
+ }
 
-        .social-icon:hover {
-            background-color: var(--accent-color);
-            color: #fff;
-            transform: translateY(-2px);
-        }
+.social-icon:hover {
+ color: var(--accent-color);
+ border-color: var(--accent-color);
+ transform: scale(1.1);
+ }
 
-        .btn {
-            padding: 8px 18px;
-            border-radius: var(--border-radius);
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            border: 1.5px solid var(--accent-color);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
+.btn-login {
+ background-color: transparent;
+ color: var(--primary-color);
+ border: 2px solid var(--accent-color);
+ padding: 10px 20px;
+ border-radius: var(--border-radius);
+ font-size: 0.9rem;
+ cursor: pointer;
+ transition: var(--transition);
+ font-weight: bold;
+ }
 
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: #fff;
-        }
+.btn-login:hover {
+ background-color: var(--accent-color);
+ color: white;
+ }
 
-        .btn-primary:hover {
-            background-color: var(--accent-color);
-            color: #fff;
-        }
+ /* --- Hero Section --- */
+.hero {
+ min-height: 60vh;
+ background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('https://picsum.photos/seed/fashionhero/1920/1080.jpg') no-repeat center center/cover;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ text-align: center;
+ color: var(--primary-color);
+ margin-bottom: 40px;
+ border: var(--border-width) solid var(--accent-color);
+ border-radius: var(--border-radius);
+ position: relative;
+ }
 
-        .btn-outline {
-            background-color: transparent;
-            color: var(--primary-color);
-        }
+.hero::before {
+ content: '';
+ position: absolute;
+ top: 0; left: 0; width: 100%; height: 100%;
+ background: rgba(197, 160, 89, 0.1);
+ z-index: 1;
+ }
 
-        .btn-outline:hover {
-            background-color: var(--accent-color);
-            color: #fff;
-        }
+.hero-content {
+ position: relative;
+ z-index: 2;
+ max-width: 800px;
+ padding: 20px;
+ }
 
-        .btn-gold {
-            background-color: var(--accent-color);
-            color: #fff;
-        }
+.hero h1 {
+ font-size: 3.5rem;
+ margin-bottom: 20px;
+ text-shadow: 2px 2px 0px rgba(255,255,255,0.8);
+ letter-spacing: 2px;
+ }
 
-        .btn-gold:hover {
-            background-color: var(--accent-hover);
-        }
+.hero p {
+ font-size: 1.3rem;
+ margin-bottom: 30px;
+ color: var(--text-color);
+ }
 
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            cursor: pointer;
-        }
+.btn-cta {
+ background-color: var(--accent-color);
+ color: white;
+ padding: 15px 40px;
+ text-decoration: none;
+ border-radius: 50px;
+ font-weight: bold;
+ transition: var(--transition);
+ display: inline-block;
+ box-shadow: 0 4px 10px rgba(197, 160, 89, 0.3);
+ border: var(--border-width) solid var(--accent-color);
+ }
 
-        /* --- Hero Section --- */
-        .hero {
-            min-height: 75vh;
-            background: linear-gradient(rgba(26, 26, 26, 0.7), rgba(26, 26, 26, 0.7)), url('https://picsum.photos') no-repeat center center/cover;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: #ffffff;
-            margin: 20px auto 50px;
-            border: 2px solid var(--accent-color);
-            border-radius: var(--border-radius);
-            padding: 40px 20px;
-        }
+.btn-cta:hover {
+ transform: translateY(-5px);
+ box-shadow: 0 6px 15px rgba(197, 160, 89, 0.5);
+ background-color: transparent;
+ color: var(--accent-color);
+ }
 
-        .hero-content {
-            max-width: 800px;
-        }
+ /* --- Gallery Section --- */
+.section-title {
+ text-align: center;
+ margin-bottom: 40px;
+ font-size: 2.5rem;
+ color: var(--primary-color);
+ position: relative;
+ display: inline-block;
+ width: 100%;
+ }
 
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: #ffffff;
-        }
+.section-title::after {
+ content: '';
+ display: block;
+ width: 60px;
+ height: 4px;
+ background-color: var(--accent-color);
+ margin: 10px auto 0;
+ border-radius: 2px;
+ }
 
-        .hero h1 span {
-            color: var(--accent-color);
-        }
+.filters {
+ display: flex;
+ justify-content: center;
+ gap: 15px;
+ margin-bottom: 30px;
+ flex-wrap: wrap;
+ }
 
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            color: #e0e0e0;
-        }
+.filter-btn {
+ background: white;
+ border: 2px solid var(--accent-color);
+ padding: 10px 25px;
+ border-radius: 50px;
+ cursor: pointer;
+ transition: var(--transition);
+ color: var(--primary-color);
+ font-weight: bold;
+ }
 
-        .btn-cta {
-            background-color: var(--accent-color);
-            color: white;
-            padding: 14px 38px;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            transition: var(--transition);
-            display: inline-block;
-            border: 2px solid var(--accent-color);
-        }
+.filter-btn.active,.filter-btn:hover {
+ background-color: var(--accent-color);
+ color: white;
+ transform: scale(1.05);
+ }
 
-        .btn-cta:hover {
-            background-color: transparent;
-            color: var(--accent-color);
-            transform: translateY(-3px);
-        }
+.gallery-grid {
+ display: grid;
+ grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+ gap: 30px;
+ }
 
-        /* --- Gallery Section --- */
-        .section-padding {
-            padding: 50px 0;
-        }
+.fashion-card {
+ background-color: var(--card-bg);
+ border: var(--border-width) solid var(--accent-color);
+ border-radius: var(--border-radius);
+ overflow: hidden;
+ box-shadow: var(--shadow);
+ transition: var(--transition);
+ position: relative;
+ }
 
-        .section-title {
-            text-align: center;
-            margin-bottom: 35px;
-            font-size: 2.2rem;
-            color: var(--primary-color);
-            font-weight: 800;
-        }
+.fashion-card:hover {
+ transform: translateY(-8px);
+ box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+ }
 
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 70px;
-            height: 4px;
-            background-color: var(--accent-color);
-            margin: 10px auto 0;
-            border-radius: 2px;
-        }
+.card-img-container {
+ height: 350px;
+ overflow: hidden;
+ position: relative;
+ }
 
-        .filters {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 35px;
-            flex-wrap: wrap;
-        }
+.card-img-container img {
+ width: 100%;
+ height: 100%;
+ object-fit: cover;
+ transition: transform 0.6s ease;
+ }
 
-        .filter-btn {
-            background: white;
-            border: 1.5px solid var(--accent-color);
-            padding: 8px 22px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: var(--transition);
-            color: var(--primary-color);
-            font-weight: 700;
-        }
+.fashion-card:hover.card-img-container img {
+ transform: scale(1.15);
+ }
 
-        .filter-btn.active, .filter-btn:hover {
-            background-color: var(--accent-color);
-            color: white;
-        }
+.card-details {
+ padding: 25px;
+ text-align: center;
+ }
 
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-            gap: 25px;
-        }
+.card-title {
+ font-size: 1.4rem;
+ margin-bottom: 10px;
+ color: var(--primary-color);
+ font-weight: bold;
+ }
 
-        .fashion-card {
-            background-color: var(--card-bg);
-            border: var(--border-width) solid var(--accent-color);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-        }
+.card-category {
+ font-size: 0.9rem;
+ color: var(--accent-color);
+ text-transform: uppercase;
+ letter-spacing: 1.5px;
+ margin-bottom: 15px;
+ display: block;
+ }
 
-        .fashion-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.12);
-        }
+.card-desc {
+ font-size: 1rem;
+ color: var(--text-light);
+ margin-bottom: 20px;
+ line-height: 1.8;
+ }
 
-        .card-img-container {
-            height: 320px;
-            overflow: hidden;
-            position: relative;
-        }
+.btn-card {
+ background-color: var(--primary-color);
+ color: white;
+ padding: 10px 20px;
+ border: none;
+ border-radius: 4px;
+ cursor: pointer;
+ transition: var(--transition);
+ font-size: 1rem;
+ width: 100%;
+ }
 
-        .card-img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
+.btn-card:hover {
+ background-color: var(--accent-color);
+ }
 
-        .fashion-card:hover .card-img-container img {
-            transform: scale(1.08);
-        }
+ /* --- Admin Dashboard --- */
+.admin-panel {
+ display: none;
+ padding: 40px 0;
+ background-color: #f4f4f4;
+ min-height: 80vh;
+ }
 
-        .card-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background-color: var(--primary-color);
-            color: var(--accent-color);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            border: 1px solid var(--accent-color);
-        }
+.admin-header {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ margin-bottom: 30px;
+ background: white;
+ padding: 20px;
+ border: var(--border-width) solid var(--accent-color);
+ border-radius: var(--border-radius);
+ box-shadow: var(--shadow);
+ }
 
-        .card-details {
-            padding: 20px;
-            text-align: center;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+.admin-form {
+ background: white;
+ padding: 30px;
+ border: var(--border-width) solid var(--accent-color);
+ border-radius: var(--border-radius);
+ box-shadow: var(--shadow);
+ margin-bottom: 40px;
+ }
 
-        .card-title {
-            font-size: 1.3rem;
-            margin-bottom: 8px;
-            color: var(--primary-color);
-            font-weight: 700;
-        }
+.form-group {
+ margin-bottom: 20px;
+ }
 
-        .card-price {
-            font-size: 1.1rem;
-            color: var(--accent-color);
-            font-weight: 800;
-            margin-bottom: 10px;
-        }
+.form-group label {
+ display: block;
+ margin-bottom: 8px;
+ font-weight: 600;
+ color: var(--primary-color);
+ }
 
-        .card-desc {
+.form-group input,.form-group textarea,.form-group select {
+ width: 100%;
+ padding: 12px;
+ border: 2px solid var(--accent-color);
+ border-radius: var(--border-radius);
+ font-size: 1rem;
+ outline: none;
+ transition: var(--transition);
+ background: #fff;
+ }
+
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus {
+ border-color: var(--primary-color);
+ box-shadow: 0 0 5px rgba(197, 160, 89, 0.3);
+ }
+
+.btn-submit {
+ background-color: var(--primary-color);
+ color: white;
+ border: none;
+ padding: 12px 25px;
+ border-radius: var(--border-radius);
+ cursor: pointer;
+ font-size: 1rem;
+ transition: var(--transition);
+ width: 100%;
+ font-weight: bold;
+ }
+
+.btn-submit:hover {
+ background-color: var(--accent-color);
+ }
+
+.admin-table {
+ width: 100%;
+ border-collapse: collapse;
+ background: white;
+ box-shadow: var(--shadow);
+ border: var(--border-width) solid var(--accent-color);
+ border-radius: var(--border-radius);
+ overflow: hidden;
+ }
+
+.admin-table th,.admin-table td {
+ padding: 15px;
+ text-align: right;
+ border-bottom: 1px solid #eee;
+ }
+
+.admin-table th {
+ background-color: var(--primary-color);
+ color: white;
+ }
+
+.action-btn {
+ background-color: #e74c3c;
+ color: white;
+ border: none;
+ padding: 8px 12px;
+ border-radius: 4px;
+ cursor: pointer;
+ transition: var(--transition);
+ }
+
+.action-btn:hover {
+ background-color: #c0392b;
+ }
+
+ /* --- Modals --- */
+.modal {
+ display: none;
+ position: fixed;
+ z-index: 2000;
+ left: 0;
+ top: 0;
+ width: 100%;
+ height: 100%;
+ background-color: rgba(0,0,0,0.6);
+ align-items: center;
+ justify-content: center;
+ backdrop-filter: blur(5px);
+ }
+
+.modal-content {
+ background-color: white;
+ padding: 40px;
+ border: var(--border-width) solid var(--accent-color);
+ border-radius: var(--border-radius);
+ width: 100%;
+ max-width: 450px;
+ text-align: center;
+ box-shadow: var(--shadow);
+ animation: slideDown 0.3s ease;
+ }
+
+ @keyframes slideDown {
+ from { transform: translateY(-50px); opacity: 0; }
+ to { transform: translateY(0); opacity: 1; }
+ }
+
+.modal-header h2 {
+ color: var(--primary-color);
+ margin-bottom: 20px;
+ font-size: 1.8rem;
+ }
+
+.close-modal {
+ position: absolute;
+ top: 15px;
+ left: 20px;
+ font-size: 28px;
+ cursor: pointer;
+ color: var(--text-color);
+ }
+
+.modal-body {
+ text-align: right;
+ margin-bottom: 20px;
+ }
+
+.modal-footer {
+ display: flex;
+ gap: 10px;
+ justify-content: center;
+ }
+
+.toggle-link {
+ color: var(--accent-color);
+ cursor: pointer;
+ text-decoration: underline;
+ font-size: 0.9rem;
+ margin-top: 10px;
+ display: block;
+ }
+
+ /* --- Footer --- */
+ footer {
+ background-color: white;
+ border-top: var(--border-width) solid var(--accent-color);
+ padding: 50px 0 20px;
+ text-align: center;
+ margin-top: 60px;
+ }
+
+.footer-content {
+ display: flex;
+ flex-direction: column;
+ gap: 20px;
+ margin-bottom: 30px;
+ }
+
+.footer-links {
+ display: flex;
+ justify-content: center;
+ gap: 25px;
+ }
+
+.footer-links a {
+ color: var(--text-color);
+ text-decoration: none;
+ font-weight: 500;
+ padding: 10px;
+ border-radius: 50%;
+ border: 1px solid transparent;
+ transition: var(--transition);
+ }
+
+.footer-links a:hover {
+ color: var(--accent-color);
+ border-color: var(--accent-color);
+ }
+
+.contact-info {
+ margin-bottom: 20px;
+ color: var(--text-light);
+ font-size: 1.1rem;
+ }
+
+.contact-info a {
+ color: var(--primary-color);
+ text-decoration: none;
+ font-weight: bold;
+ }
+
+.rules-box {
+ background: white;
+ border: var(--border-width) solid var(--accent-color);
+ padding: 20px;
+ margin-top: 20px;
+ border-radius: var(--border-radius);
+ text-align: right;
+ display: inline-block;
+ max-width: 800px;
+ }
+
+.rules-box h3 {
+ color: var(--primary-color);
+ margin-bottom: 10px;
+ }
+
+ /* --- Responsive --- */
+ @media (max-width: 768px) {
+.hero h1 { font-size: 2rem; }
+.nav-links { display: none; } /* Simplified mobile nav */
+.gallery-grid { grid-template-columns: 1fr; }
+.admin-table { font-size: 0.85rem; }
+.section-title { font-size: 2rem; }
+.logo-img { height: 40px; }
+ 
+ /* Mobile Menu Toggle */
+.mobile-toggle {
+ display: block;
+ color: var(--primary-color);
+ font-size: 1.5rem;
+ cursor: pointer;
+ }
+ }
+
+ @media (min-width: 769px) {
+.mobile-toggle { display: none; }
+ }
+ </style>
+</head>
+<body>
+
+ <!-- Header -->
+ <header>
+ <div class="container">
+ <nav>
+ <div class="logo-area">
+ <img id="site-logo" src="https://via.placeholder.com/100x100?text=Logo" alt="Logo" class="logo-img">
+ <a href="#" class="logo-text">sosoal<span>studio</span></a>
+ </div>
+ 
+ <!-- Mobile Menu Button -->
+ <div class="mobile-toggle" onclick="toggleMobileMenu()">
+ <i class="fas fa-bars"></i>
+ </div>
+
+ <div class="nav-links">
+ <a href="#" onclick="showPage('home')" class="active">الرئيسية</a>
+ <a href="#gallery">الموديلات</a>
+ <a href="#about">من نحن</a>
+ <a href="#contact">اتصل بنا</a>
+ </div>
+
+ <div class="social-icons">
+ <a href="https://whatsapp.com/channel/0029VbCDPspGzzKQk3xnD917" target="_blank" class="social-icon" title="WhatsApp Channel">
+ <i class="fab fa-whatsapp"></i>
+ </a>
+ <a href="#" id="insta-link" class="social-icon" title="Instagram">
+ <i class="fab fa-instagram"></i>
+ </a>
+ <a href="#" id="fb-link" class="social-icon" title="Facebook">
+ <i class="fab fa-facebook-f"></i>
+ </a>
+ <a href="#" id="tiktok-link" class="social-icon" title="TikTok">
+ <i class="fab fa-tiktok"></i>
+ </a>
+ </div>
+ 
+ <button class="btn-login" onclick="openAuthModal()">دخول</button>
+ </nav>
+ </div>
+ </header>
+
+ <!-- Main Content -->
+ <main id="main-content">
+ <!-- Home Page -->
+ <div id="home-page">
+ <section class="hero">
+ <div class="hero-content">
+ <h1>sosoalstudio</h1>
+ <p>استوديو تصميم أزياء عصري يقدم أحدث صيحات الموضة الدقيقة والفاخرة.</p>
+ <a href="#gallery" class="btn-cta">تصفح الموديلات</a>
+ </div>
+ </section>
+
+ <section class="container" id="gallery">
+ <h2 class="section-title">أحدث الموديلات</h2>
+ 
+ <div class="filters">
+ <button class="filter-btn active" onclick="filterGallery('all')">الكل</button>
+ <button class="filter-btn" onclick="filterGallery('women')">نسائي</button>
+ <button class="filter-btn" onclick="filterGallery('men')">رجالي</button>
+ <button class="filter-btn" onclick="filterGallery('accessories')">إكسسوارات</button>
+ </div>
+
+ <div class="gallery-grid" id="gallery-container">
+ <!-- Gallery items will be injected here via JavaScript -->
+ </div>
+ </section>
+
+ <section class="container" id="about">
+ <h2 class="section-title">من نحن</h2>
+ <div class="rules-box" style="text-align: center;">
+ <p>نحن في sosoalstudio نسعى لتقديم أرقى التصاميم التي تجمع بين الأناقة والراحة، مع احترام كامل لحقوق الملكية الفكرية.</p>
+ </div>
+ </section>
+ </div>
+
+ <!-- Admin Dashboard -->
+ <div id="admin-page" class="admin-panel">
+ <div class="container">
+ <div class="admin-header">
+ <h2>لوحة التحكم - sosoalstudio</h2>
+ <button onclick="toggleAdmin()" class="btn-submit" style="width: auto;">عودة للموقع</button>
+ </div>
+
+ <!-- Settings Panel -->
+ <div class="admin-form">
+ <h3><i class="fas fa-cogs"></i> إعدادات الموقع</h3>
+ <form id="settings-form" onsubmit="saveSettings(event)">
+ <div class="form-group">
+ <label>رابط صورة الشعار Logo URL</label>
+ <input type="url" id="setting-logo" placeholder="رابط الصورة">
+ <small style="color: #666;">انسخ رابط الشعار من الإنترنت (ضعها بين < >)</small>
+ </div>
+ <div class="form-group">
+ <label>رابط إنستجرام</label>
+ <input type="url" id="setting-insta" placeholder="https://instagram.com/...">
+ </div>
+ <div class="form-group">
+ <label>رابط فيسبوك</label>
+ <input type="url" id="setting-fb" placeholder="https://facebook.com/...">
+ </div>
+ <div class="form-group">
+ <label>رابط تيك توك</label>
+ <input type="url" id="setting-tiktok" placeholder="https://tiktok.com/...">
+ </div>
+ <button type="submit" class="btn-submit">حفظ الإعدادات</button>
+ </form>
+ </div>
+
+ <!-- Add New Item Form -->
+ <div class="admin-form">
+ <h3><i class="fas fa-plus-circle"></i> إضافة موديل جديد</h3>
+ <form id="add-item-form" onsubmit="handleAddItem(event)">
+ <div class="form-group">
+ <label>عنوان الموديل</label>
+ <input type="text" id="item-title" required placeholder="مثال: فستان سهرة بني">
+ </div>
+ <div class="form-group">
+ <label>التصنيف</label>
+ <select id="item-category">
+ <option value="women">نسائي</option>
+ <option value="men">رجالي</option>
+ <option value="accessories">إكسسوارات</option>
+ </select>
+ </div>
+ <div class="form-group">
+ <label>وصف الموديل</label>
+ <textarea id="item-desc" rows="3" required placeholder="تفاصيل عن الموديل..."></textarea>
+ </div>
+ <div class="form-group">
+ <label>رابط الصورة (URL)</label>
+ <input type="url" id="item-image" required placeholder="https://example.com/image.jpg">
+ </div>
+ <button type="submit" class="btn-submit">نشر الموديل</button>
+ </form>
+ </div>
+
+ <!-- Manage Items Table -->
+ <div style="overflow-x: auto;">
+ <h3>الموديلات المضافة</h3>
+ <table class="admin-table">
+ <thead>
+ <tr>
+ <th>الصورة</th>
+ <th>العنوان</th>
+ <th>التصنيف</th>
+ <th>الإجراءات</th>
+ </tr>
+ </thead>
+ <tbody id="admin-items-list">
+ </tbody>
+ </table>
+ </div>
+
+ <!-- Messages Panel -->
+ <div class="admin-form" style="margin-top: 40px;">
+ <h3><i class="fas fa-envelope-open-text"></i> الرسائل الواردة</h3>
+ <div id="messages-list">
+ <p style="text-align: center; color: #888;">لا توجد رسائل حتى الآن.</p>
+ </div>
+ </div>
+ </div>
+ </div>
+ </main>
+
+ <!-- Auth Modal (Login/Register) -->
+ <div id="auth-modal" class="modal">
+ <div class="modal-content">
+ <span class="close-modal" onclick="closeAuthModal()">&times;</span>
+ <div class="modal-header">
+ <h2>تسجيل الدخول</h2>
+ <p id="auth-subtitle">مرحباً بك في sosoalstudio</p>
+ </div>
+ 
+ <!-- Login Form -->
+ <form id="login-form" onsubmit="handleLogin(event)">
+ <div class="form-group">
+ <label>اسم المستخدم</label>
+ <input type="text" id="username" placeholder="اسم المستخدم" required>
+ </div>
+ <div class="form-group">
+ <label>كلمة المرور</label>
+ <input type="password" id="password" placeholder="كلمة المرور" required>
+ </div>
+ <button type="submit" class="btn-submit">دخول</button>
+ <span class="toggle-link" onclick="switchAuthMode('register')">ليس لديك حساب؟ سجل الآن</span>
+ </form>
+
+ <!-- Register Form -->
+ <form id="register-form" style="display: none;" onsubmit="handleRegister(event)">
+ <div class="form-group">
+ <label>اسم المستخدم</label>
+ <input type="text" id="reg-username" placeholder="اختر اسم مستخدم" required>
+ </div>
+ <div class="form-group">
+ <label>البريد الإلكتروني</label>
+ <input type="email" id="reg-email" placeholder="example@mail.com" required>
+ </div>
+ <div class="form-group">
+ <label>كلمة المرور</label>
+ <input type="password" id="reg-password" placeholder="كلمة المرور" required>
+ </div>
+ <button type="submit" class="btn-submit">تسجيل حساب</button>
+ <span class="toggle-link" onclick="switchAuthMode('login')">لديك حساب بالفعل؟ سجل دخول</span>
+ </form>
+ </div>
+ </div>
+
+ <!-- Complaint Modal -->
+ <div id="complaint-modal" class="modal">
+ <div class="modal-content" style="max-width: 500px;">
+ <span class="close-modal" onclick="closeComplaintModal()">&times;</span>
+ <div class="modal-header">
+ <h2><i class="fas fa-comment-dots"></i> الشكوى والاستفسار</h2>
+ </div>
+ <form onsubmit="handleComplaint(event)">
+ <div class="form-group">
+ <label>الاسم</label>
+ <input type="text" id="comp-name" required placeholder="الاسم الكامل">
+ </div>
+ <div class="form-group">
+ <label>البريد الإلكتروني</label>
+ <input type="email" id="comp-email" required placeholder="بريدك الإلكتروني">
+ </div>
+ <div class="form-group">
+ <label>الرسالة</label>
+ <textarea id="comp-message" rows="5" required placeholder="اكتب استفسارك أو شكواك هنا..."></textarea>
+ </div>
+ <button type="submit" class="btn-submit">إرسال الرسالة</button>
+ </form>
+ </div>
+ </div>
+
+ <!-- Footer -->
+ <footer>
+ <div class="container">
+ <div class="footer-content">
+ <div class="social-icons" style="justify-content: center; margin-bottom: 10px;">
+ <a href="https://whatsapp.com/channel/0029VbCDPspGzzKQk3xnD917" target="_blank" class="social-icon" style="font-size: 1.5rem;">
+ <i class="fab fa-whatsapp"></i>
+ </a>
+ <a href="#" id="footer-insta" class="social-icon" style="font-size: 1.5rem;">
+ <i class="fab fa-instagram"></i>
+ </a>
+ <a href="#" id="footer-fb" class="social-icon" style="font-size: 1.5rem;">
+ <i class="fab fa-facebook-f"></i>
+ </a>
+ <a href="#" id="footer-tiktok" class="social-icon" style="font-size: 1.5rem;">
+ <i class="fab fa-tiktok"></i>
+ </a>
+ </div>
+ </div>
+
+ <div class="contact-info">
+ <p>تواصل معنا عبر البريد الإلكتروني: <a href="mailto:sosoalstudio@gmail.com">sosoalstudio@gmail.com</a></p>
+ </div>
+
+ <div class="rules-box">
+ <h3>القوانين والأحكام</h3>
+ <p>
+ 1. جميع التصاميم والصور الموجودة في الموقع هي ملكية خاصة لاستوديو sosoalstudio.
+ 2. يمنع النسخ أو إعادة النشر دون إذن كتابي من المالك.
+ 3. حقوق الملكية الفكرية محفوظة لسنة 2026.
+ </p>
+ </div>
+
+ <button onclick="openComplaintModal()" class="btn-login" style="margin-top: 20px; width: 100%;">شكوى أو استفسار</button>
+ </div>
+ </footer>
+
+ <script>
+ // --- Data Management (Simulated Database) ---
+ const defaultItems = [
+ {
+ id: 1,
+ title: "فستان سهرة بني (Gretchen)",
+ category: "women",
+ description: "خامة صوفية بني غامق مع فتحة خلفية عرضية وحزام مرصع عند الصدر.",
+ image: "https://picsum.photos/seed/gretchen/400/500"
+ },
+ {
+ id: 2,
+ title: "جاكيت صيفي كاجوال",
+ category: "men",
+ description: "جاكيت قطني مريح مناسب للأيام الصافية. تصميم عصري ومريح.",
+ image: "https://picsum.photos/seed/jacket/400/500"
+ },
+ {
+ id: 3,
+ title: "حقيبة يد جلدية",
+ category: "accessories",
+ description: "حقيبة يد فاخرة من الجلد الطبيعي، مثالية للمناسبات الرسمية.",
+ image: "https://picsum.photos/seed/bag/400/500"
+ }
+ ];
+
+ // Load items from LocalStorage or use defaults
+ let fashionItems = JSON.parse(localStorage.getItem('sosoItems')) || defaultItems;
+
+ // Settings (Logo, Socials)
+ let siteSettings = JSON.parse(localStorage.getItem('sosoSettings')) || {
+ logo: "https://via.placeholder.com/100x100?text=Logo",
+ instagram: "#",
+ facebook: "#",
+ tiktok: "#"
+ };
+
+ // Users Database
+ let users = JSON.parse(localStorage.getItem('sosoUsers')) || [];
+
+ // Complaints Database
+ let complaints = JSON.parse(localStorage.getItem('sosoComplaints')) || [];
+
+ // Current User Session
+ let currentUser = JSON.parse(localStorage.getItem('sosoCurrentUser')) || null;
+
+ // --- Navigation Logic ---
+ function toggleMobileMenu() {
+ const navLinks = document.querySelector('.nav-links');
+ if (navLinks.style.display === 'flex') {
+ navLinks.style.display = 'none';
+ } else {
+ navLinks.style.display = 'flex';
+ navLinks.style.flexDirection = 'column';
+ navLinks.style.position = 'absolute';
+ navLinks.style.top = '80px';
+ navLinks.style.left = '0';
+ navLinks.style.right = '0';
+ navLinks.style.background = 'white';
+ navLinks.style.padding = '20px';
+ navLinks.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+ }
+ }
+
+ function toggleAdmin() {
+ const homePage = document.getElementById('home-page');
+ const adminPage = document.getElementById('admin-page');
+ const navLinks = document.querySelector('.nav-links');
+ const btnLogin = document.querySelector('.btn-login');
+
+ if (currentUser && currentUser.role === 'admin') {
+ homePage.style.display = 'block';
+ adminPage.style.display = 'none';
+ navLinks.style.display = 'flex';
+ btnLogin.style.display = 'block';
+ window.scrollTo(0,0);
+ } else {
+ alert('غير مسموح لك بدخول لوحة التحكم.');
+ }
+ }
+
+ function showPage(page) {
+ if(page === 'home') {
+ toggleAdmin(); // Just refresh view
+ }
+ }
+
+ // --- Gallery Rendering ---
+ function renderGallery(filter = 'all') {
+ const container = document.getElementById('gallery-container');
+ container.innerHTML = '';
+
+ const filteredItems = filter === 'all' 
+ ? fashionItems: fashionItems.filter(item => item.category === filter);
+
+ filteredItems.forEach(item => {
+ const card = document.createElement('div');
+ card.className = 'fashion-card';
+ card.innerHTML = `
+ <div class="card-img-container">
+ <img src="${item.image}" alt="${item.title}" loading="lazy">
+ </div>
+ <div class="card-details">
+ <span class="card-category">${getCategoryName(item.category)}</span>
+ <h3 class="card-title">${item.title}</h3>
+ <p class="card-desc">${item.description}</p>
+ <div class="card-actions">
+ <button onclick="deleteItem(${item.id})" style="background-color: var(--accent-color); color:white;">حذف الموديل</button>
+ </div>
+ </div>
+ `;
+ container.appendChild(card);
+ });
+ }
+
+ function filterGallery(category) {
+ document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+ event.target.classList.add('active');
+ renderGallery(category);
+ }
+
+ function getCategoryName(cat) {
+ const names = {
+ 'women': 'نسائي',
+ 'men': 'رجالي',
+ 'accessories': 'إكسسوارات'
+ };
+ return names[cat] || cat;
+ }
+
+ // --- Admin Functions ---
+ function renderAdminTable() {
+ const tbody = document.getElementById('admin-items-list');
+ tbody.innerHTML = '';
+
+ fashionItems.forEach(item => {
+ const tr = document.createElement('tr');
+ tr.innerHTML = `
+ <td><img src="${item.image}" width="50" style="border-radius:4px; border:1px solid var(--accent-color);"></td>
+ <td>${item.title}</td>
+ <td>${getCategoryName(item.category)}</td>
+ <td>
+ <button class="action-btn" onclick="deleteItem(${item.id})">حذف</button>
+ </td>
+ `;
+ tbody.appendChild(tr);
+ });
+ }
+
+ function renderAdminMessages() {
+ const list = document.getElementById('messages-list');
+ list.innerHTML = '';
+
+ if (complaints.
