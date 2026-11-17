@@ -5,7 +5,14 @@
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <meta name="google-site-verification" content="N7r0pG_QqgvaTG1ZTQbAzjVNX8pvMbZ4yy1qPd2xd4w" />
  <title>sosoalstudio - استوديو الأزياء</title>
+ 
+ <!-- Font Awesome -->
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ 
+ <!-- Firebase SDKs -->
+ <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
  <style>
  /* --- CSS Variables & Reset --- */
 :root {
@@ -19,6 +26,7 @@
  --shadow: 0 4px 6px rgba(0,0,0,0.1);
  --transition: all 0.3s ease;
  --border-width: 2px;
+ --danger-color: #e74c3c;
  }
 
  * {
@@ -140,6 +148,7 @@
  transform: scale(1.1);
  }
 
+ /* --- Buttons --- */
 .btn-login {
  background-color: transparent;
  color: var(--primary-color);
@@ -157,7 +166,7 @@
  color: white;
  }
 
-.btn-admin {
+.btn-admin-panel {
  background-color: var(--accent-color);
  color: white;
  padding: 10px 20px;
@@ -166,6 +175,32 @@
  transition: var(--transition);
  font-weight: bold;
  margin-right: 10px;
+ display: none; /* Hidden by default */
+ }
+.btn-admin-panel:hover {
+ background-color: #b08d4b;
+ }
+
+.btn-logout {
+ background-color: var(--danger-color);
+ color: white;
+ padding: 10px 20px;
+ border-radius: var(--border-radius);
+ cursor: pointer;
+ transition: var(--transition);
+ font-weight: bold;
+ }
+
+.btn-logout:hover {
+ background-color: #c0392b;
+ }
+
+ /* --- Admin Badge --- */
+.admin-badge {
+ color: #f1c40f;
+ font-size: 1rem;
+ margin-right: 5px;
+ display: none;
  }
 
  /* --- Hero Section --- */
@@ -602,13 +637,11 @@
  /* --- Responsive --- */
  @media (max-width: 768px) {
 .hero h1 { font-size: 2rem; }
-.nav-links { display: none; } /* Simplified mobile nav */
+.nav-links { display: none; }
 .gallery-grid { grid-template-columns: 1fr; }
 .admin-table { font-size: 0.85rem; }
 .section-title { font-size: 2rem; }
 .logo-img { height: 40px; }
- 
- /* Mobile Menu Toggle */
 .mobile-toggle {
  display: block;
  color: var(--primary-color);
@@ -813,12 +846,12 @@
  <!-- Login Form -->
  <form id="login-form" onsubmit="handleLogin(event)">
  <div class="form-group">
- <label>اسم المستخدم</label>
- <input type="text" id="username" placeholder="اسم المستخدم" required>
+ <label>البريد الإلكتروني</label>
+ <input type="email" id="email" placeholder="example@gmail.com" required>
  </div>
  <div class="form-group">
  <label>كلمة المرور</label>
- <input type="password" id="password" placeholder="كلمة المرور" required>
+ <input type="password" id="password" placeholder="••••••••" required>
  </div>
  <button type="submit" class="btn-submit">دخول</button>
  <span class="toggle-link" onclick="switchAuthMode('register')">ليس لديك حساب؟ سجل الآن</span>
@@ -827,16 +860,16 @@
  <!-- Register Form -->
  <form id="register-form" style="display: none;" onsubmit="handleRegister(event)">
  <div class="form-group">
- <label>اسم المستخدم</label>
- <input type="text" id="reg-username" placeholder="اختر اسم مستخدم" required>
+ <label>الاسم</label>
+ <input type="text" id="reg-name" placeholder="الاسم الكامل">
  </div>
  <div class="form-group">
  <label>البريد الإلكتروني</label>
- <input type="email" id="reg-email" placeholder="example@mail.com" required>
+ <input type="email" id="reg-email" placeholder="example@gmail.com" required>
  </div>
  <div class="form-group">
  <label>كلمة المرور</label>
- <input type="password" id="reg-password" placeholder="كلمة المرور" required>
+ <input type="password" id="reg-password" placeholder="••••••••" required>
  </div>
  <button type="submit" class="btn-submit">تسجيل حساب</button>
  <span class="toggle-link" onclick="switchAuthMode('login')">لديك حساب بالفعل؟ سجل دخول</span>
@@ -904,6 +937,21 @@
  </footer>
 
  <script>
+ // --- Firebase Configuration ---
+ const firebaseConfig = {
+ apiKey: "AIzaSyB0BKuC4FYqeEEs8JaGbcsC8RCk4JzB5CI",
+ authDomain: "sosoalstudio-733a6.firebaseapp.com",
+ projectId: "sosoalstudio-733a6",
+ storageBucket: "sosoalstudio-733a6.firebasestorage.app",
+ messagingSenderId: "86617309251",
+ appId: "1:86617309251:web:1ea6914ab52bbbc692d4f6",
+ measurementId: "G-0LC7321NGW"
+ };
+
+ // Initialize Firebase
+ const app = firebase.initializeApp(firebaseConfig);
+ const auth = firebase.auth();
+
  // --- Data Management (LocalStorage) ---
  const defaultItems = [
  {
@@ -936,15 +984,29 @@
  facebook: "#",
  tiktok: "#"
  };
- let users = JSON.parse(localStorage.getItem('sosoUsers')) || [];
+ // Note: We are using Firebase Auth for users, so we don't need a local users list for auth.
+ // We keep complaints local.
  let complaints = JSON.parse(localStorage.getItem('sosoComplaints')) || [];
- let currentUser = JSON.parse(localStorage.getItem('sosoCurrentUser')) || null;
+ let currentUser = null; // Will hold Firebase User object
 
  // --- Initialization ---
  document.addEventListener('DOMContentLoaded', () => {
  renderGallery();
  renderSocialLinks();
  renderAuthButtons();
+ 
+ // Check for active session on load
+ auth.onAuthStateChanged(user => {
+ if (user) {
+ currentUser = user;
+ renderAuthButtons();
+ toggleAdmin();
+ } else {
+ currentUser = null;
+ renderAuthButtons();
+ toggleAdmin();
+ }
+ });
  });
 
  // --- Navigation Logic ---
@@ -967,7 +1029,7 @@
 
  function showPage(page) {
  if(page === 'home') {
- toggleAdmin(); // Refresh view
+ toggleAdmin();
  }
  }
 
@@ -977,19 +1039,17 @@
  const navLinks = document.querySelector('.nav-links');
  const authContainer = document.getElementById('auth-buttons-container');
 
+ // If user is logged in, show home. If not, show home.
+ homePage.style.display = 'block';
+ adminPage.style.display = 'none';
+ navLinks.style.display = 'flex';
+ 
  if (currentUser) {
- homePage.style.display = 'block';
- adminPage.style.display = 'none';
- navLinks.style.display = 'flex';
  authContainer.style.display = 'none';
- window.scrollTo(0,0);
  } else {
- homePage.style.display = 'block';
- adminPage.style.display = 'none';
- navLinks.style.display = 'flex';
  authContainer.style.display = 'block';
- window.scrollTo(0,0);
  }
+ window.scrollTo(0,0);
  }
 
  // --- Gallery Rendering ---
@@ -1057,17 +1117,12 @@
  function renderAdminUsers() {
  const tbody = document.getElementById('admin-users-list');
  tbody.innerHTML = '';
-
- users.forEach(user => {
- const tr = document.createElement('tr');
- tr.innerHTML = `
- <td>${user.username}</td>
- <td>${user.email}</td>
- <td>
- <button class="action-btn" onclick="deleteUser('${user.username}')">حذف</button>
- </td>
- `;
- tbody.appendChild(tr);
+ 
+ // Display Firebase Users
+ auth.onAuthStateChanged(user => {
+ if(user) {
+ tbody.innerHTML = '<tr><td colspan="3">تم تسجيل الدخول كمستخدم عبر Firebase</td></tr>';
+ }
  });
  }
 
@@ -1126,20 +1181,27 @@
  }
  }
 
- // --- Auth Functions ---
+ // --- Auth Functions (Firebase) ---
  function renderAuthButtons() {
  const container = document.getElementById('auth-buttons-container');
  container.innerHTML = '';
 
  if (currentUser) {
- if (currentUser.role === 'admin') {
+ // Determine if Owner
+ const isOwner = currentUser.email === 'sosoalstudio@gmail.com';
+ 
+ const displayName = currentUser.displayName || currentUser.email.split('@')[0];
+ 
+ if (isOwner) {
  container.innerHTML = `
- <button class="btn-admin" onclick="openAdminPanel()">لوحة التحكم</button>
- <button class="btn-login" onclick="logout()">خروج</button>
+ <span class="admin-badge"><i class="fas fa-star"></i> مالك</span>
+ <button class="btn-admin-panel" onclick="openAdminPanel()">لوحة التحكم</button>
+ <button class="btn-logout" onclick="logout()">خروج</button>
  `;
  } else {
  container.innerHTML = `
- <button class="btn-login" onclick="logout()">خروج</button>
+ <span style="margin-left: 10px; font-weight: bold;">مرحباً، ${displayName}</span>
+ <button class="btn-logout" onclick="logout()">خروج</button>
  `;
  }
  }
@@ -1174,61 +1236,59 @@
 
  function handleLogin(e) {
  e.preventDefault();
- const user = document.getElementById('username').value;
- const pass = document.getElementById('password').value;
+ const email = document.getElementById('email').value;
+ const password = document.getElementById('password').value;
 
- // Check for Admin
- if (user === 'admin' && pass === '1234') {
- const adminUser = { username: 'admin', email: 'admin@sosoal.com', role: 'admin' };
- loginUser(adminUser);
- return;
- }
-
- // Check for Regular Users
- const foundUser = users.find(u => u.username === user && u.password === pass);
-
- if (foundUser) {
- loginUser(foundUser);
- } else {
- alert('اسم المستخدم أو كلمة المرور غير صحيحة');
- }
+ auth.signInWithEmailAndPassword(email, password)
+.then((userCredential) => {
+ // Signed in
+ currentUser = userCredential.user;
+ renderAuthButtons();
+ toggleAdmin();
+ alert('تم تسجيل الدخول بنجاح!');
+ closeAuthModal();
+ })
+.catch((error) => {
+ const errorCode = error.code;
+ const errorMessage = error.message;
+ alert('خطأ: ' + errorMessage);
+ });
  }
 
  function handleRegister(e) {
  e.preventDefault();
- const username = document.getElementById('reg-username').value;
+ const name = document.getElementById('reg-name').value;
  const email = document.getElementById('reg-email').value;
  const password = document.getElementById('reg-password').value;
 
- // Check Duplicate Username
- if (users.find(u => u.username === username)) {
- alert('اسم المستخدم موجود بالفعل');
- return;
- }
-
- const newUser = { username, email, password, role: 'user' };
- users.push(newUser);
- localStorage.setItem('sosoUsers', JSON.stringify(users));
-
- alert('تم إنشاء حسابك بنجاح! يمكنك الآن تسجيل الدخول.');
- switchAuthMode('login');
- }
-
- function loginUser(userObj) {
- currentUser = userObj;
- localStorage.setItem('sosoCurrentUser', JSON.stringify(currentUser));
- closeAuthModal();
+ auth.createUserWithEmailAndPassword(email, password)
+.then((userCredential) => {
+ // Create user with custom display name
+ userCredential.user.updateProfile({ displayName: name })
+.then(() => {
  renderAuthButtons();
  toggleAdmin();
- alert(userObj.role === 'admin' ? 'أهلاً بالمصممة سوسو': 'شكراً لكم، تم تسجيل الدخول');
+ alert('تم إنشاء الحساب بنجاح!');
+ closeAuthModal();
+ })
+.catch((error) => {
+ alert('حدث خطأ أثناء تحديث الاسم: ' + error.message);
+ });
+ })
+.catch((error) => {
+ const errorCode = error.code;
+ const errorMessage = error.message;
+ alert('خطأ: ' + errorMessage);
+ });
  }
 
  function logout() {
+ auth.signOut().then(() => {
  currentUser = null;
- localStorage.removeItem('sosoCurrentUser');
  renderAuthButtons();
  toggleAdmin();
  alert('تم تسجيل الخروج');
+ });
  }
 
  // --- Complaints System ---
@@ -1263,13 +1323,6 @@
  localStorage.setItem('sosoItems', JSON.stringify(fashionItems));
  renderGallery();
  renderAdminTable();
- }
-
- function deleteUser(username) {
- if (!confirm('هل أنت متأكد من حذف هذا العضو؟')) return;
- users = users.filter(u => u.username !== username);
- localStorage.setItem('sosoUsers', JSON.stringify(users));
- renderAdminUsers();
  }
 
  function deleteMessage(index) {
