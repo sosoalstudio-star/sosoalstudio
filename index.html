@@ -157,6 +157,17 @@
  color: white;
  }
 
+.btn-admin {
+ background-color: var(--accent-color);
+ color: white;
+ padding: 10px 20px;
+ border-radius: var(--border-radius);
+ cursor: pointer;
+ transition: var(--transition);
+ font-weight: bold;
+ margin-right: 10px;
+ }
+
  /* --- Hero Section --- */
 .hero {
  min-height: 60vh;
@@ -618,7 +629,7 @@
  <div class="container">
  <nav>
  <div class="logo-area">
- <img id="site-logo" src="https://via.placeholder.com/100x100?text=Logo" alt="Logo" class="logo-img">
+ <img id="site-logo" src="" alt="Logo" class="logo-img">
  <a href="#" class="logo-text">sosoal<span>studio</span></a>
  </div>
  
@@ -635,9 +646,6 @@
  </div>
 
  <div class="social-icons">
- <a href="https://whatsapp.com/channel/0029VbCDPspGzzKQk3xnD917" target="_blank" class="social-icon" title="WhatsApp Channel">
- <i class="fab fa-whatsapp"></i>
- </a>
  <a href="#" id="insta-link" class="social-icon" title="Instagram">
  <i class="fab fa-instagram"></i>
  </a>
@@ -649,7 +657,9 @@
  </a>
  </div>
  
- <button class="btn-login" onclick="openAuthModal()">دخول</button>
+ <div id="auth-buttons-container">
+ <!-- Buttons injected by JS based on login state -->
+ </div>
  </nav>
  </div>
  </header>
@@ -694,18 +704,13 @@
  <div class="container">
  <div class="admin-header">
  <h2>لوحة التحكم - sosoalstudio</h2>
- <button onclick="toggleAdmin()" class="btn-submit" style="width: auto;">عودة للموقع</button>
+ <button onclick="toggleAdmin()" class="btn-submit" style="width: auto; background-color: #666;">عودة للموقع</button>
  </div>
 
  <!-- Settings Panel -->
  <div class="admin-form">
- <h3><i class="fas fa-cogs"></i> إعدادات الموقع</h3>
+ <h3><i class="fas fa-cogs"></i> إدارة روابط التواصل</h3>
  <form id="settings-form" onsubmit="saveSettings(event)">
- <div class="form-group">
- <label>رابط صورة الشعار Logo URL</label>
- <input type="url" id="setting-logo" placeholder="رابط الصورة">
- <small style="color: #666;">انسخ رابط الشعار من الإنترنت (ضعها بين < >)</small>
- </div>
  <div class="form-group">
  <label>رابط إنستجرام</label>
  <input type="url" id="setting-insta" placeholder="https://instagram.com/...">
@@ -767,9 +772,27 @@
  </table>
  </div>
 
+ <!-- Manage Users -->
+ <div class="admin-form" style="margin-top: 40px;">
+ <h3><i class="fas fa-users"></i> إدارة العضويات</h3>
+ <div style="overflow-x: auto;">
+ <table class="admin-table">
+ <thead>
+ <tr>
+ <th>اسم المستخدم</th>
+ <th>البريد الإلكتروني</th>
+ <th>الإجراءات</th>
+ </tr>
+ </thead>
+ <tbody id="admin-users-list">
+ </tbody>
+ </table>
+ </div>
+ </div>
+
  <!-- Messages Panel -->
  <div class="admin-form" style="margin-top: 40px;">
- <h3><i class="fas fa-envelope-open-text"></i> الرسائل الواردة</h3>
+ <h3><i class="fas fa-envelope-open-text"></i> الرسائل والشكاوى</h3>
  <div id="messages-list">
  <p style="text-align: center; color: #888;">لا توجد رسائل حتى الآن.</p>
  </div>
@@ -851,9 +874,6 @@
  <div class="container">
  <div class="footer-content">
  <div class="social-icons" style="justify-content: center; margin-bottom: 10px;">
- <a href="https://whatsapp.com/channel/0029VbCDPspGzzKQk3xnD917" target="_blank" class="social-icon" style="font-size: 1.5rem;">
- <i class="fab fa-whatsapp"></i>
- </a>
  <a href="#" id="footer-insta" class="social-icon" style="font-size: 1.5rem;">
  <i class="fab fa-instagram"></i>
  </a>
@@ -884,7 +904,7 @@
  </footer>
 
  <script>
- // --- Data Management (Simulated Database) ---
+ // --- Data Management (LocalStorage) ---
  const defaultItems = [
  {
  id: 1,
@@ -909,25 +929,23 @@
  }
  ];
 
- // Load items from LocalStorage or use defaults
+ // Initialize Data
  let fashionItems = JSON.parse(localStorage.getItem('sosoItems')) || defaultItems;
-
- // Settings (Logo, Socials)
  let siteSettings = JSON.parse(localStorage.getItem('sosoSettings')) || {
- logo: "https://via.placeholder.com/100x100?text=Logo",
  instagram: "#",
  facebook: "#",
  tiktok: "#"
  };
-
- // Users Database
  let users = JSON.parse(localStorage.getItem('sosoUsers')) || [];
-
- // Complaints Database
  let complaints = JSON.parse(localStorage.getItem('sosoComplaints')) || [];
-
- // Current User Session
  let currentUser = JSON.parse(localStorage.getItem('sosoCurrentUser')) || null;
+
+ // --- Initialization ---
+ document.addEventListener('DOMContentLoaded', () => {
+ renderGallery();
+ renderSocialLinks();
+ renderAuthButtons();
+ });
 
  // --- Navigation Logic ---
  function toggleMobileMenu() {
@@ -947,26 +965,30 @@
  }
  }
 
+ function showPage(page) {
+ if(page === 'home') {
+ toggleAdmin(); // Refresh view
+ }
+ }
+
  function toggleAdmin() {
  const homePage = document.getElementById('home-page');
  const adminPage = document.getElementById('admin-page');
  const navLinks = document.querySelector('.nav-links');
- const btnLogin = document.querySelector('.btn-login');
+ const authContainer = document.getElementById('auth-buttons-container');
 
- if (currentUser && currentUser.role === 'admin') {
+ if (currentUser) {
  homePage.style.display = 'block';
  adminPage.style.display = 'none';
  navLinks.style.display = 'flex';
- btnLogin.style.display = 'block';
+ authContainer.style.display = 'none';
  window.scrollTo(0,0);
  } else {
- alert('غير مسموح لك بدخول لوحة التحكم.');
- }
- }
-
- function showPage(page) {
- if(page === 'home') {
- toggleAdmin(); // Just refresh view
+ homePage.style.display = 'block';
+ adminPage.style.display = 'none';
+ navLinks.style.display = 'flex';
+ authContainer.style.display = 'block';
+ window.scrollTo(0,0);
  }
  }
 
@@ -1032,8 +1054,277 @@
  });
  }
 
+ function renderAdminUsers() {
+ const tbody = document.getElementById('admin-users-list');
+ tbody.innerHTML = '';
+
+ users.forEach(user => {
+ const tr = document.createElement('tr');
+ tr.innerHTML = `
+ <td>${user.username}</td>
+ <td>${user.email}</td>
+ <td>
+ <button class="action-btn" onclick="deleteUser('${user.username}')">حذف</button>
+ </td>
+ `;
+ tbody.appendChild(tr);
+ });
+ }
+
  function renderAdminMessages() {
  const list = document.getElementById('messages-list');
  list.innerHTML = '';
 
- if (complaints.
+ if (complaints.length === 0) {
+ list.innerHTML = '<p style="text-align: center; color: #888;">لا توجد رسائل حتى الآن.</p>';
+ return;
+ }
+
+ complaints.forEach((msg, index) => {
+ const div = document.createElement('div');
+ div.style.borderBottom = '1px solid #eee';
+ div.style.padding = '15px 0';
+ div.innerHTML = `
+ <p><strong>الاسم:</strong> ${msg.name} <br> <strong>البريد:</strong> ${msg.email}</p>
+ <p style="margin-top:5px;">${msg.message}</p>
+ <button onclick="deleteMessage(${index})" style="float:left; font-size:0.8rem; color:#e74c3c; background:none; border:none; cursor:pointer;">حذف</button>
+ `;
+ list.appendChild(div);
+ });
+ }
+
+ function saveSettings(e) {
+ e.preventDefault();
+ const insta = document.getElementById('setting-insta').value;
+ const fb = document.getElementById('setting-fb').value;
+ const tiktok = document.getElementById('setting-tiktok').value;
+
+ siteSettings = { instagram: insta, facebook: fb, tiktok: tiktok };
+ localStorage.setItem('sosoSettings', JSON.stringify(siteSettings));
+ renderSocialLinks();
+ alert('تم حفظ الإعدادات بنجاح');
+ }
+
+ function renderSocialLinks() {
+ const links = {
+ 'insta-link': siteSettings.instagram,
+ 'fb-link': siteSettings.facebook,
+ 'tiktok-link': siteSettings.tiktok,
+ 'footer-insta': siteSettings.instagram,
+ 'footer-fb': siteSettings.facebook,
+ 'footer-tiktok': siteSettings.tiktok
+ };
+
+ for (const [id, url] of Object.entries(links)) {
+ const el = document.getElementById(id);
+ if (el && url) {
+ el.href = url;
+ el.style.display = 'inline-block';
+ } else if (el) {
+ el.style.display = 'none';
+ }
+ }
+ }
+
+ // --- Auth Functions ---
+ function renderAuthButtons() {
+ const container = document.getElementById('auth-buttons-container');
+ container.innerHTML = '';
+
+ if (currentUser) {
+ if (currentUser.role === 'admin') {
+ container.innerHTML = `
+ <button class="btn-admin" onclick="openAdminPanel()">لوحة التحكم</button>
+ <button class="btn-login" onclick="logout()">خروج</button>
+ `;
+ } else {
+ container.innerHTML = `
+ <button class="btn-login" onclick="logout()">خروج</button>
+ `;
+ }
+ }
+ }
+
+ function switchAuthMode(mode) {
+ const loginForm = document.getElementById('login-form');
+ const regForm = document.getElementById('register-form');
+ const header = document.querySelector('#auth-modal.modal-header h2');
+ const subtitle = document.getElementById('auth-subtitle');
+
+ if (mode === 'login') {
+ loginForm.style.display = 'block';
+ regForm.style.display = 'none';
+ header.textContent = 'تسجيل الدخول';
+ subtitle.textContent = 'مرحباً بك في sosoalstudio';
+ } else {
+ loginForm.style.display = 'none';
+ regForm.style.display = 'block';
+ header.textContent = 'إنشاء حساب جديد';
+ subtitle.textContent = 'انضم إلينا الآن';
+ }
+ }
+
+ function openAuthModal() {
+ document.getElementById('auth-modal').style.display = 'flex';
+ }
+
+ function closeAuthModal() {
+ document.getElementById('auth-modal').style.display = 'none';
+ }
+
+ function handleLogin(e) {
+ e.preventDefault();
+ const user = document.getElementById('username').value;
+ const pass = document.getElementById('password').value;
+
+ // Check for Admin
+ if (user === 'admin' && pass === '1234') {
+ const adminUser = { username: 'admin', email: 'admin@sosoal.com', role: 'admin' };
+ loginUser(adminUser);
+ return;
+ }
+
+ // Check for Regular Users
+ const foundUser = users.find(u => u.username === user && u.password === pass);
+
+ if (foundUser) {
+ loginUser(foundUser);
+ } else {
+ alert('اسم المستخدم أو كلمة المرور غير صحيحة');
+ }
+ }
+
+ function handleRegister(e) {
+ e.preventDefault();
+ const username = document.getElementById('reg-username').value;
+ const email = document.getElementById('reg-email').value;
+ const password = document.getElementById('reg-password').value;
+
+ // Check Duplicate Username
+ if (users.find(u => u.username === username)) {
+ alert('اسم المستخدم موجود بالفعل');
+ return;
+ }
+
+ const newUser = { username, email, password, role: 'user' };
+ users.push(newUser);
+ localStorage.setItem('sosoUsers', JSON.stringify(users));
+
+ alert('تم إنشاء حسابك بنجاح! يمكنك الآن تسجيل الدخول.');
+ switchAuthMode('login');
+ }
+
+ function loginUser(userObj) {
+ currentUser = userObj;
+ localStorage.setItem('sosoCurrentUser', JSON.stringify(currentUser));
+ closeAuthModal();
+ renderAuthButtons();
+ toggleAdmin();
+ alert(userObj.role === 'admin' ? 'أهلاً بالمصممة سوسو': 'شكراً لكم، تم تسجيل الدخول');
+ }
+
+ function logout() {
+ currentUser = null;
+ localStorage.removeItem('sosoCurrentUser');
+ renderAuthButtons();
+ toggleAdmin();
+ alert('تم تسجيل الخروج');
+ }
+
+ // --- Complaints System ---
+ function openComplaintModal() {
+ document.getElementById('complaint-modal').style.display = 'flex';
+ }
+
+ function closeComplaintModal() {
+ document.getElementById('complaint-modal').style.display = 'none';
+ }
+
+ function handleComplaint(e) {
+ e.preventDefault();
+ const name = document.getElementById('comp-name').value;
+ const email = document.getElementById('comp-email').value;
+ const message = document.getElementById('comp-message').value;
+
+ const newComplaint = { name, email, message, date: new Date().toLocaleDateString() };
+ complaints.unshift(newComplaint); // Add to beginning
+ localStorage.setItem('sosoComplaints', JSON.stringify(complaints));
+
+ alert('تم إرسال رسالتك بنجاح!');
+ closeComplaintModal();
+ // Reset form
+ e.target.reset();
+ }
+
+ // --- Global Actions ---
+ function deleteItem(id) {
+ if (!confirm('هل أنت متأكد من حذف هذا الموديل؟')) return;
+ fashionItems = fashionItems.filter(item => item.id !== id);
+ localStorage.setItem('sosoItems', JSON.stringify(fashionItems));
+ renderGallery();
+ renderAdminTable();
+ }
+
+ function deleteUser(username) {
+ if (!confirm('هل أنت متأكد من حذف هذا العضو؟')) return;
+ users = users.filter(u => u.username !== username);
+ localStorage.setItem('sosoUsers', JSON.stringify(users));
+ renderAdminUsers();
+ }
+
+ function deleteMessage(index) {
+ if (!confirm('هل أنت متأكد من حذف هذه الرسالة؟')) return;
+ complaints.splice(index, 1);
+ localStorage.setItem('sosoComplaints', JSON.stringify(complaints));
+ renderAdminMessages();
+ }
+
+ function handleAddItem(e) {
+ e.preventDefault();
+ const title = document.getElementById('item-title').value;
+ const category = document.getElementById('item-category').value;
+ const desc = document.getElementById('item-desc').value;
+ const image = document.getElementById('item-image').value;
+
+ const newItem = {
+ id: Date.now(),
+ title,
+ category,
+ description: desc,
+ image
+ };
+
+ fashionItems.push(newItem);
+ localStorage.setItem('sosoItems', JSON.stringify(fashionItems));
+
+ alert('تم إضافة الموديل بنجاح!');
+ e.target.reset();
+ renderAdminTable();
+ renderGallery();
+ }
+
+ function openAdminPanel() {
+ renderAdminTable();
+ renderAdminUsers();
+ renderAdminMessages();
+ const homePage = document.getElementById('home-page');
+ const adminPage = document.getElementById('admin-page');
+ const navLinks = document.querySelector('.nav-links');
+ const authContainer = document.getElementById('auth-buttons-container');
+
+ homePage.style.display = 'none';
+ adminPage.style.display = 'block';
+ navLinks.style.display = 'none';
+ authContainer.style.display = 'none';
+ window.scrollTo(0,0);
+ }
+
+ // Close modals on outside click
+ window.onclick = function(event) {
+ if (event.target.classList.contains('modal')) {
+ event.target.style.display = 'none';
+ }
+ }
+ </script>
+</body>
+</html>
