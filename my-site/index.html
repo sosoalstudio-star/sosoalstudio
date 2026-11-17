@@ -1003,17 +1003,17 @@
  renderAuthButtons();
  
  // Check for active session on load
- auth.onAuthStateChanged(user => {
- if (user) {
- currentUser = user;
- renderAuthButtons();
- toggleAdmin();
- } else {
- currentUser = null;
- renderAuthButtons();
- toggleAdmin();
- }
- });
+auth.onAuthStateChanged(user => {
+if (user) {
+currentUser = user;
+renderAuthButtons();
+toggleAdmin();
+} else {
+currentUser = null;
+renderAuthButtons();
+toggleAdmin();
+}
+});
  });
 
  // --- Navigation Logic ---
@@ -1052,12 +1052,16 @@
  navLinks.style.display = 'flex';
  
  if (currentUser) {
- authContainer.style.display = 'none';
- } else {
- authContainer.style.display = 'block';
- }
- window.scrollTo(0,0);
- }
+authContainer.style.display = 'flex';
+authContainer.style.gap = '10px';
+authContainer.style.alignItems = 'center';
+const loginBtns = document.getElementById('my-visible-buttons');
+if (loginBtns) loginBtns.style.display = 'none';
+} else {
+authContainer.style.display = 'none';
+const loginBtns = document.getElementById('my-visible-buttons');
+if (loginBtns) loginBtns.style.display = 'flex';
+}
 
  // --- Gallery Rendering ---
  function renderGallery(filter = 'all') {
